@@ -1,0 +1,37 @@
+.container {
+    width: 400px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 40px;
+}
+
+.avatarBox {
+    width: 110px;
+}
+
+.avatarBox img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.descriptionBox {
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 2px solid darkslategrey;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.nameAndStatusbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.residence {
+    width: 50px;
+}
+
