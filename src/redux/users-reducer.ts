@@ -1,3 +1,6 @@
+import axios from "axios";
+import {Dispatch} from "redux";
+
 export enum ACTIONS {
     SET_USERS = "SET_USERS",
     SET_TOTAL_USERS_COUNT = "SET_TOTAL_USERS_COUNT",
@@ -37,9 +40,42 @@ export const usersReducer = (state: UsersPageType = initialState, action: Action
 export const setUsers = (users: Array<UserType>) => ({type: ACTIONS.SET_USERS, users} as const)
 export const setTotalUsersCount = (totalCount: number) => ({type: ACTIONS.SET_TOTAL_USERS_COUNT, totalCount} as const)
 export const setCurrentPage = (currentPage: number) => ({type: ACTIONS.SET_CURRENT_PAGE, currentPage} as const)
-export const followUser = (userId: number) => ({type: ACTIONS.FOLLOW, userId} as const)
-export const unFollowUser = (userId: number) => ({type: ACTIONS.UNFOLLOW, userId} as const)
+export const followUserAC = (userId: number) => ({type: ACTIONS.FOLLOW, userId} as const)
+export const unFollowUserAC = (userId: number) => ({type: ACTIONS.UNFOLLOW, userId} as const)
 export const toggleIsFetching = (isFetching: boolean) => ({type: ACTIONS.TOGGLE_IS_FETCHING, isFetching} as const)
+
+export const followUser = (userId: number) => (dispatch: Dispatch) => {
+    axios.post(`https://social-network.samuraijs.com/api/1.0/follow/${userId}`, {},
+        {
+            withCredentials: true,
+            headers: {
+                'API-KEY': '81900730-749c-4a2a-ba22-e77b5f16bf0e'
+            }
+        })
+        .then(res => {
+            if (res.data.resultCode === 0) {
+                dispatch(followUserAC(userId))
+            }else{
+                console.error(res.data.messages[0])
+            }
+        })
+}
+export const unFollowUser = (userId: number) => (dispatch: Dispatch) => {
+    axios.delete(`https://social-network.samuraijs.com/api/1.0/follow/${userId}`,
+        {
+            withCredentials: true,
+            headers: {
+                'API-KEY': '81900730-749c-4a2a-ba22-e77b5f16bf0e'
+            }
+        })
+        .then(res => {
+            if (res.data.resultCode === 0) {
+                dispatch(unFollowUserAC(userId))
+            }else{
+                console.error(res.data.message[0])
+            }
+        })
+}
 
 
 //types
@@ -71,6 +107,6 @@ export type ActionType =
     | ReturnType<typeof setUsers>
     | ReturnType<typeof setTotalUsersCount>
     | ReturnType<typeof setCurrentPage>
-    | ReturnType<typeof followUser>
-    | ReturnType<typeof unFollowUser>
+    | ReturnType<typeof followUserAC>
+    | ReturnType<typeof unFollowUserAC>
     | ReturnType<typeof toggleIsFetching>

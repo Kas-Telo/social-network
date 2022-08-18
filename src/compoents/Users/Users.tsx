@@ -5,8 +5,9 @@ import {UsersPageType} from "../../redux/users-reducer";
 
 type UsersPropsType = {
     usersPage: UsersPageType
-    followUser: (userId: number) => void
-    unFollowUser: (userId: number) => void
+    // followUser: (userId: number) => void
+    // unFollowUser: (userId: number) => void
+    onFollowClick: (userId: number, followed: boolean) => void
     onPageClick: (page: number) => void
 }
 
@@ -15,7 +16,6 @@ export const Users = (props: UsersPropsType) => {
     let pages: Array<number> = []
 
     for (let i = 1; i <= pagesCount; i++) {
-        if(i === pagesCount)
         pages.push(i)
     }
 
@@ -26,8 +26,10 @@ export const Users = (props: UsersPropsType) => {
             {el}</span>
     })
     let users = props.usersPage.users.map(el => {
-        return <User key={el.id} user={el} followUser={props.followUser}
-                     unFollowUser={props.unFollowUser}/>
+        return <User key={el.id} user={el}
+                     // followUser={props.followUser}
+                     // unFollowUser={props.unFollowUser}
+                     onFollowClick={props.onFollowClick}/>
     })
 
     return (

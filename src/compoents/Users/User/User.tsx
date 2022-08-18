@@ -6,13 +6,15 @@ import {NavLink} from "react-router-dom";
 
 type UserPropsType = {
     user: UserType
-    followUser: (userId: number) => void
-    unFollowUser: (userId: number) => void
+    // followUser: (userId: number) => void
+    // unFollowUser: (userId: number) => void
+    onFollowClick: (userId: number, followed: boolean) => void
 }
 
 export const User = (props: UserPropsType) => {
     const onFollowClick = () => {
-        props.user.followed ? props.unFollowUser(props.user.id) : props.followUser(props.user.id)
+        // props.user.followed ? props.unFollowUser(props.user.id) : props.followUser(props.user.id)
+        props.onFollowClick(props.user.id, props.user.followed)
     }
     return (
         <>
