@@ -1,0 +1,14 @@
+.sideBarFriendsItems {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.item {
+    margin-right: 10px;
+}
+
+.item img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}

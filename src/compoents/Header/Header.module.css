@@ -1,0 +1,15 @@
+.header {
+    grid-area: header;
+    background-color: lightgreen;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header img{
+    width: 60px;
+    border-radius: 50%;
+}
+.loginBlock {
+    text-decoration: none;
+    color: white;
+}
