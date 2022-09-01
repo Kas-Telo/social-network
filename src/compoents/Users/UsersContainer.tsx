@@ -1,44 +1,20 @@
-import React from 'react';
-import {
-    followUser,
-    setCurrentPage, toggleIsFetching,
-    setTotalUsersCount,
-    setUsers,
-    unFollowUser,
-    UsersPageType,
-    UserType
-} from "../../redux/users-reducer";
-import axios from "axios";
+import React, {ComponentType} from 'react';
+import {followUser, getUsers, unFollowUser, UsersPageType} from "../../redux/users-reducer";
 import {connect} from "react-redux";
 import {RootStateType} from "../../redux/store-redux";
 import {Users} from "./Users";
-import {Preloader} from "../../commons/Preloader";
+import {Preloader} from "../../commons/Preloader/Preloader";
+import {compose} from "redux";
+import {getUsersState} from "../../redux/users-selectors";
 
 
 class UsersContainer extends React.Component<UsersContainerPropsType> {
     componentDidMount() {
-        this.props.toggleIsFetching(true)
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${1}&count=${this.props.usersPage.pageSize}`, {
-            withCredentials: true
-        })
-            .then(res => {
-                this.props.setUsers(res.data.items)
-                this.props.setTotalUsersCount(res.data.totalCount)
-                this.props.setCurrentPage(1)
-            })
-            .finally(() => this.props.toggleIsFetching(false))
+        this.props.getUsers(this.props.usersPage.currentPage, this.props.usersPage.pageSize)
     }
 
     onPageClick(page: number) {
-        this.props.toggleIsFetching(true)
-        axios.get(`https://social-network.samuraijs.com/api/1.0/users?page=${page}&count=${this.props.usersPage.pageSize}`, {
-            withCredentials: true
-        })
-            .then(res => {
-                this.props.setUsers(res.data.items)
-                this.props.setCurrentPage(page)
-            })
-            .finally(() => this.props.toggleIsFetching(false))
+        this.props.getUsers(page, this.props.usersPage.pageSize)
     }
 
     onFollowClick(userId: number, followed: boolean) {
@@ -53,8 +29,6 @@ class UsersContainer extends React.Component<UsersContainerPropsType> {
             <>
                 <div>{this.props.usersPage.isFetching && <Preloader/>}</div>
                 <Users usersPage={this.props.usersPage}
-                    // followUser={this.props.followUser}
-                    // unFollowUser={this.props.unFollowUser}
                        onFollowClick={this.onFollowClick.bind(this)}
                        onPageClick={this.onPageClick.bind(this)}/>
             </>
@@ -65,29 +39,21 @@ class UsersContainer extends React.Component<UsersContainerPropsType> {
 
 const mapStateToProps = (state: RootStateType): MapStateType => {
     return {
-        usersPage: state.usersPage
+        usersPage: getUsersState(state),
     }
 }
-export default connect(mapStateToProps,
-    {
-        unFollowUser,
-        followUser,
-        setTotalUsersCount,
-        setUsers,
-        setCurrentPage,
-        toggleIsFetching,
-    } as MapDispatchType)(UsersContainer)
+export default compose<ComponentType>(
+    connect(mapStateToProps, {unFollowUser, followUser, getUsers,} as MapDispatchType),
+    // WithAuthRedirect
+)(UsersContainer)
 
 //types
 type MapStateType = {
     usersPage: UsersPageType
 }
 type MapDispatchType = {
-    setUsers: (users: Array<UserType>) => void
-    setTotalUsersCount: (totalCount: number) => void
-    setCurrentPage: (currentPage: number) => void
+    getUsers: (currentPage: number, pageSize: number) => void
     followUser: (userId: number) => void
     unFollowUser: (userId: number) => void
-    toggleIsFetching: (isFetching: boolean) => void
 }
 type UsersContainerPropsType = MapStateType & MapDispatchType

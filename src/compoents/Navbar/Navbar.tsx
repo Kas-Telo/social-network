@@ -2,16 +2,17 @@ import React from 'react';
 import style from './Navbar.module.css'
 import {NavLink} from "react-router-dom";
 import {SideBarFriendsContainer} from "./SideBarFriends/SideBarFriendsContainer";
+import {useSelector} from "react-redux";
+import {RootStateType} from "../../redux/store-redux";
 
-type NavBarPropsType = {
-    // sideBar: SideBarType
-}
 
-export const Navbar = (props: NavBarPropsType) => {
+
+export const Navbar = () => {
+    let authId = useSelector<RootStateType, number | null>(state => state.auth.id)
     return (
         <nav className={style.nav}>
             <div className={style.item}>
-                <NavLink  className={({isActive}) => isActive ? style.activeLink : ''} to={'/profile'}>Profile</NavLink>
+                <NavLink  className={({isActive}) => isActive ? style.activeLink : ''} to={`/profile/${authId && authId}`}>Profile</NavLink>
             </div>
             <div className={style.item}>
                 <NavLink className={({isActive}) => isActive ? style.activeLink : ''} to={'/dialogs'}>Messages</NavLink>

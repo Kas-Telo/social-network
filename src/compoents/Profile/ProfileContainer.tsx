@@ -1,10 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {ComponentType, useEffect} from 'react';
 import {RootStateType} from "../../redux/store-redux";
 import {connect} from "react-redux";
-import {ProfilePageType, ProfileType, setProfile} from "../../redux/profile-reducer";
+import {getProfile, getStatus, ProfilePageType, updateStatus} from "../../redux/profile-reducer";
 import {Profile} from "./Profile";
-import axios from "axios";
 import {useParams} from "react-router-dom";
+import {compose} from "redux";
+import {WithAuthRedirect} from "../../hoc/withAuthRedirect";
+import {getProfileState} from "../../redux/profile-selectors";
+import {getAuthId, getIsAuthValue} from "../../redux/auth-selectors";
 
 // class ProfileContainer extends React.Component<ProfileContainerPropsType> {
 //
@@ -18,7 +21,7 @@ import {useParams} from "react-router-dom";
 //     }
 //     setParamUserId(param: number){
 //         this.paramUserId = param
-//         debugger
+//
 //     }
 //
 //     render() {
@@ -31,20 +34,25 @@ import {useParams} from "react-router-dom";
 // };
 const ProfileContainer = (props: ProfileContainerPropsType) => {
     const params = useParams<'*'>()
-    let id: number
-    id = params["*"] ? Number(params["*"]) : (props.authId ? props.authId : -1)
+    let id: number | null = null
+
+    id = params["*"] ? Number(params["*"]) : props.authId
+
+    const updateStatus = (status: string) => {
+        props.updateStatus(status)
+    }
+
     useEffect(() => {
-        if (id !== -1) {
-            axios.get(`https://social-network.samuraijs.com/api/1.0/profile/${id}`)
-                .then(res => {
-                    props.setProfile(res.data)
-                })
+        if (id !== null) {
+            props.getStatus(id)
+            props.getProfile(id)
         }
     }, [id])
 
     return (
         <div>
-            <Profile {...props} profile={props.profilePage.profile}/>
+            <Profile {...props} profile={props.profilePage.profile} status={props.profilePage.status}
+                     updateStatus={updateStatus} authProfile={id === props.authId}/>
         </div>
     );
 
@@ -52,19 +60,27 @@ const ProfileContainer = (props: ProfileContainerPropsType) => {
 
 const mapStateToProps = (state: RootStateType): MapStatePropsType => {
     return {
-        profilePage: state.profilePage,
-        authId: state.auth.id
+        profilePage: getProfileState(state),
+        authId: getAuthId(state),
+        isAuth: getIsAuthValue(state),
     }
 }
-export default connect(mapStateToProps,
-    {setProfile} as MapDispatchPropsType)(ProfileContainer)
+
+export default compose<ComponentType>(
+    connect(mapStateToProps,
+        {getProfile, getStatus, updateStatus} as MapDispatchPropsType),
+    WithAuthRedirect
+)(ProfileContainer)
 
 //types
 type MapStatePropsType = {
     profilePage: ProfilePageType
     authId: number | null
+    isAuth: boolean
 }
 type MapDispatchPropsType = {
-    setProfile: (profile: ProfileType) => void
+    getProfile: (userId: number) => void
+    getStatus: (userId: number) => void
+    updateStatus: (status: string) => void
 }
 type ProfileContainerPropsType = MapStatePropsType & MapDispatchPropsType

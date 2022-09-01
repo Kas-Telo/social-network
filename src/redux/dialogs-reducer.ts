@@ -1,6 +1,7 @@
+import {AddMessageDataType} from "../compoents/Dialogs/AddMessageForm/AddMessageForm";
+
 const enum ACTIONS {
     SEND_MESSAGE = "SEND-MESSAGE",
-    UPDATE_NEW_MESSAGE_TEXT = "UPDATE-NEW-MESSAGE-TEXT",
 }
 
 let initialState: DialogsPageType = {
@@ -18,30 +19,23 @@ let initialState: DialogsPageType = {
     newMessageText: '',
 }
 
-export const dialogsReducer = (state: DialogsPageType = initialState, action: ActionsType): DialogsPageType => {
+export const dialogsReducer = (state: DialogsPageType = initialState, action: DialogsActionsType): DialogsPageType => {
     switch (action.type) {
-        case ACTIONS.UPDATE_NEW_MESSAGE_TEXT:
-            return {...state, newMessageText: action.message}
-        case ACTIONS.SEND_MESSAGE: {
-            if (state.newMessageText === '') return state
-            return {
-                ...state,
-                messages: [...state.messages, {id: '0', message: state.newMessageText}],
-                newMessageText: ''
-            }
-        }
+        case ACTIONS.SEND_MESSAGE:
+            return {...state, messages: [...state.messages, {id: '0', message: action.addMessageData.messageText}]}
         default:
             return state
     }
 }
 
-export const sendMessageAC = () => ({type: ACTIONS.SEND_MESSAGE} as const)
-export const updateNewMessageTextAC = (message: string) => ({type: ACTIONS.UPDATE_NEW_MESSAGE_TEXT, message} as const)
+export const sendMessageAC = (addMessageData: AddMessageDataType) => ({
+    type: ACTIONS.SEND_MESSAGE,
+    addMessageData
+} as const)
 
 //types
-type ActionsType =
+export type DialogsActionsType =
     | ReturnType<typeof sendMessageAC>
-    | ReturnType<typeof updateNewMessageTextAC>
 
 
 //types

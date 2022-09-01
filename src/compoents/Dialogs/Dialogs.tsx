@@ -1,12 +1,12 @@
-import React, {ChangeEvent} from 'react';
+import React from 'react';
 import style from './Dialogs.module.css'
 import {NavLink} from "react-router-dom";
 import {DialogsPageType} from "../../redux/dialogs-reducer";
+import AddMessageForm, {AddMessageDataType} from "./AddMessageForm/AddMessageForm";
 
 type DialogsPropsType = {
     dialogsData: DialogsPageType
-    updateNewMessageText: (message: string) => void
-    sendMessage: () => void
+    sendMessage: (addMessageData: AddMessageDataType) => void
 }
 
 export const Dialogs = (props: DialogsPropsType) => {
@@ -16,12 +16,12 @@ export const Dialogs = (props: DialogsPropsType) => {
     const messagesElements = props.dialogsData.messages.map((el, index) =>
         <Messages key={`${index}${el.id}`} id={el.id} message={el.message}/>)
 
-    const onUpdateNewMessageText = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        props.updateNewMessageText(e.currentTarget.value)
-    }
+    // const onUpdateNewMessageText = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    //     props.updateNewMessageText(e.currentTarget.value)
+    // }
 
-    const onSendMessage = () => {
-        props.sendMessage()
+    const onSendMessage = (addMessageData: AddMessageDataType) => {
+        props.sendMessage(addMessageData)
     }
     return (
         <div className={style.dialogs}>
@@ -31,8 +31,7 @@ export const Dialogs = (props: DialogsPropsType) => {
             <div className={style.messages}>
                 <div>{messagesElements}</div>
                 <div>
-                    <textarea placeholder={'Enter message'} value={props.dialogsData.newMessageText} onChange={onUpdateNewMessageText}/>
-                    <button onClick={onSendMessage}>Send</button>
+                    <AddMessageForm onSubmit={onSendMessage}/>
                 </div>
             </div>
         </div>

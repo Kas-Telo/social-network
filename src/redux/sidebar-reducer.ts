@@ -10,7 +10,7 @@ let initialState: SideBarType = {
     ]
 }
 
-export const sidebarReducer = (state: SideBarType = initialState, action: ActionsType): SideBarType => {
+export const sidebarReducer = (state: SideBarType = initialState, action: SidebarActionsType): SideBarType => {
     switch (action.type) {
 
         default:
@@ -20,7 +20,7 @@ export const sidebarReducer = (state: SideBarType = initialState, action: Action
 
 
 //types
-export type ActionsType = any
+export type SidebarActionsType = any
 export type FriendType = {
     id: string,
     name: string
